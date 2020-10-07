@@ -1,54 +1,23 @@
-import React, { useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 
+import ProtectedRoute from './auth/ProtectedRoute';
+
 import Login from './components/Login/Login';
-
-const users = [
-  { id: 1, userName: 'Twan' },
-  { id: 2, userName: 'Amos' },
-];
-
-const reducer = (users, action) => {
-  switch (action.type) {
-    case 'login': {
-      users.forEach((user) => {
-        if (user.userName === action.payload.userName) {
-          console.log('User Found');
-        } else {
-          console.log('No user Found');
-        }
-      });
-      console.log(users[0].userName);
-      console.log(action.payload.userName);
-      break;
-    }
-    default: {
-      return users;
-    }
-  }
-};
+import Test from './components/Test';
+import DashBoard from './components/UserDashboard/UserDashboard';
 
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, users);
-
-  //compares entered user name with usernames in database
-  const logOnHandler = (e) => {
-    const user = {
-      userName: e.userName,
-      password: e.password,
-    };
-    users.forEach((user) => {
-      if (user.userName === e.userName) {
-        console.log('User Found');
-      } else {
-        console.log('No user Found');
-      }
-    });
-  };
-
   return (
     <div className='App'>
-      <Login login={(user) => logOnHandler(user)} />
+      <Router>
+        <Switch>
+          <Route path='/test' component={Test} />
+          <ProtectedRoute exact path='/dashboard' component={DashBoard} />
+          <Route exact path='/' component={Login} />
+        </Switch>
+      </Router>
     </div>
   );
 };

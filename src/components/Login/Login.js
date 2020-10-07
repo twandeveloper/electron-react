@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
+import { withRouter } from 'react-router-dom';
+import auth from '../../auth/Auth';
 
 import './Login.css';
 
-const Login = (props) => {
+import Modal from '../../ui/Modal';
+
+const Login = ({ history }) => {
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('test');
+  const [showModal, setShowModal] = useState(false);
+
+  // const [state, dispatch] = useReducer(reducer, initialState);
 
   const userHandler = (e) => {
     e.preventDefault();
@@ -12,15 +19,28 @@ const Login = (props) => {
       userName: user,
       password: password,
     };
-    props.login(userInfo);
+
+    checkAuth();
   };
+
+  const checkAuth = () => {
+    auth.login(user, (auth) => {
+      if (auth) {
+        setShowModal(true);
+      } else {
+        return null;
+      }
+    });
+  };
+
+  const decModal = showModal ? <Modal history={history} /> : '';
 
   return (
     <div className='Login'>
       <h1>Login Page</h1>
       <form>
         <input
-          class='text'
+          className='text'
           type='text'
           placeholder='Username'
           name='Username'
@@ -29,7 +49,7 @@ const Login = (props) => {
           required
         />
         <input
-          class='text'
+          className='text'
           type='password'
           placeholder='Password'
           name='Password'
@@ -44,8 +64,9 @@ const Login = (props) => {
           value='Login'
         />
       </form>
+      {decModal}
     </div>
   );
 };
 
-export default Login;
+export default withRouter(Login);
